@@ -26,7 +26,26 @@ export const Hero = () => {
           transition={{ duration: 0.8 }}
         >
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 tracking-tight">
-            <span className="text-primary neon-glow">InflectiveX</span>
+            <span className="relative inline-block">
+              <span className="absolute inset-0 text-primary blur-2xl opacity-50 animate-glow-pulse">
+                InflectiveX
+              </span>
+              <span 
+                className="relative text-primary animate-glow-pulse"
+                style={{
+                  textShadow: `
+                    0 0 10px hsl(var(--primary)),
+                    0 0 20px hsl(var(--primary)),
+                    0 0 40px hsl(var(--primary)),
+                    0 0 80px hsl(var(--primary)),
+                    0 0 120px hsl(var(--primary))
+                  `,
+                  WebkitTextStroke: '2px hsl(var(--primary) / 0.3)'
+                }}
+              >
+                InflectiveX
+              </span>
+            </span>
           </h1>
           
           <motion.p 
