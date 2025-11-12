@@ -25,25 +25,19 @@ export const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 tracking-tight">
-            <span className="relative inline-block">
-              <span className="absolute inset-0 text-primary blur-3xl opacity-60 animate-glow-pulse">
-                InflectiveX
-              </span>
-              <span 
-                className="relative text-primary animate-glow-pulse"
-                style={{
-                  textShadow: `
-                    0 0 20px hsl(var(--primary) / 0.8),
-                    0 0 40px hsl(var(--primary) / 0.6),
-                    0 0 60px hsl(var(--primary) / 0.4),
-                    0 0 100px hsl(var(--primary) / 0.3)
-                  `
-                }}
-              >
-                InflectiveX
-              </span>
-            </span>
+          <h1 
+            className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 tracking-tight text-primary animate-glow-pulse"
+            style={{
+              textShadow: `
+                0 0 20px hsl(var(--primary) / 0.8),
+                0 0 40px hsl(var(--primary) / 0.6),
+                0 0 60px hsl(var(--primary) / 0.4),
+                0 0 100px hsl(var(--primary) / 0.3),
+                0 0 140px hsl(var(--primary) / 0.2)
+              `
+            }}
+          >
+            InflectiveX
           </h1>
           
           <motion.p 
