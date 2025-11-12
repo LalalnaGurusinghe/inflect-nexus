@@ -27,20 +27,18 @@ export const Hero = () => {
         >
           <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-6 tracking-tight">
             <span className="relative inline-block">
-              <span className="absolute inset-0 text-primary blur-2xl opacity-50 animate-glow-pulse">
+              <span className="absolute inset-0 text-primary blur-3xl opacity-60 animate-glow-pulse">
                 InflectiveX
               </span>
               <span 
                 className="relative text-primary animate-glow-pulse"
                 style={{
                   textShadow: `
-                    0 0 10px hsl(var(--primary)),
-                    0 0 20px hsl(var(--primary)),
-                    0 0 40px hsl(var(--primary)),
-                    0 0 80px hsl(var(--primary)),
-                    0 0 120px hsl(var(--primary))
-                  `,
-                  WebkitTextStroke: '2px hsl(var(--primary) / 0.3)'
+                    0 0 20px hsl(var(--primary) / 0.8),
+                    0 0 40px hsl(var(--primary) / 0.6),
+                    0 0 60px hsl(var(--primary) / 0.4),
+                    0 0 100px hsl(var(--primary) / 0.3)
+                  `
                 }}
               >
                 InflectiveX
