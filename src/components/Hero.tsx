@@ -301,14 +301,14 @@ export const Hero = () => {
                   transform: "scale(1.5) translateY(20px)",
                   filter: "blur(8px) brightness(1.5)",
                   textShadow:
-                    "0 0 30px rgba(57,255,20,1), 0 0 50px rgba(57,255,20,0.6)",
+                    "0 0 12px rgba(57,255,20,1), 0 0 20px rgba(57,255,20,0.6)",
                 },
                 {
                   opacity: 0.85,
                   transform: "scale(1.02) translateY(0px)",
                   filter: "blur(0px) brightness(1.2)",
                   textShadow:
-                    "0 0 20px rgba(57,255,20,1), 0 0 35px rgba(57,255,20,0.6), 0 0 8px rgba(57,255,20,1)",
+                    "0 0 10px rgba(57,255,20,1), 0 0 15px rgba(57,255,20,0.6), 0 0 4px rgba(57,255,20,1)",
                 },
               ],
               {
@@ -605,21 +605,21 @@ export const Hero = () => {
                       transform: "scale(1.1) rotate(6deg) translateY(8px)",
                       filter: "blur(0px) brightness(1.3) saturate(1.2)",
                       textShadow:
-                        "0 0 20px rgba(57,255,20,0.8), 0 0 35px rgba(57,255,20,0.5)",
+                        "0 0 15px rgba(57,255,20,0.8), 0 0 25px rgba(57,255,20,0.5)",
                     },
                     {
                       opacity: 1,
                       transform: "scale(1.4) rotate(-3deg) translateY(-8px)",
                       filter: "blur(0px) brightness(2) saturate(1.5)",
                       textShadow:
-                        "0 0 50px rgba(57,255,20,1), 0 0 70px rgba(57,255,20,0.8), 0 0 20px rgba(57,255,20,1)",
+                        "0 0 35px rgba(57,255,20,1), 0 0 50px rgba(57,255,20,0.8), 0 0 15px rgba(57,255,20,1)",
                     },
                     {
                       opacity: 1,
                       transform: "scale(1) rotate(0deg) translateY(0px)",
                       filter: "blur(0px) brightness(1.3) saturate(1.2)",
                       textShadow:
-                        "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                        "0 0 8px rgba(57,255,20,1), 0 0 12px rgba(57,255,20,0.7), 0 0 4px rgba(57,255,20,1)",
                     },
                   ],
                   {
@@ -636,19 +636,19 @@ export const Hero = () => {
                       {
                         transform: "scale(1)",
                         textShadow:
-                          "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                          "0 0 12px rgba(57,255,20,1), 0 0 18px rgba(57,255,20,0.7), 0 0 5px rgba(57,255,20,1)",
                         filter: "brightness(1.3) saturate(1.2)",
                       },
                       {
                         transform: "scale(1.12)",
                         textShadow:
-                          "0 0 30px rgba(57,255,20,1), 0 0 50px rgba(57,255,20,0.9), 0 0 15px rgba(57,255,20,1)",
+                          "0 0 20px rgba(57,255,20,1), 0 0 35px rgba(57,255,20,0.9), 0 0 10px rgba(57,255,20,1)",
                         filter: "brightness(1.6) saturate(1.4)",
                       },
                       {
                         transform: "scale(1)",
                         textShadow:
-                          "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                          "0 0 12px rgba(57,255,20,1), 0 0 18px rgba(57,255,20,0.7), 0 0 5px rgba(57,255,20,1)",
                         filter: "brightness(1.3) saturate(1.2)",
                       },
                     ],
@@ -666,19 +666,19 @@ export const Hero = () => {
                       {
                         transform: "scale(1)",
                         textShadow:
-                          "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                          "0 0 12px rgba(57,255,20,1), 0 0 18px rgba(57,255,20,0.7), 0 0 5px rgba(57,255,20,1)",
                         filter: "brightness(1.3) saturate(1.2)",
                       },
                       {
                         transform: "scale(1.08)",
                         textShadow:
-                          "0 0 25px rgba(57,255,20,1), 0 0 40px rgba(57,255,20,0.8), 0 0 12px rgba(57,255,20,1)",
+                          "0 0 18px rgba(57,255,20,1), 0 0 28px rgba(57,255,20,0.8), 0 0 8px rgba(57,255,20,1)",
                         filter: "brightness(1.5) saturate(1.3)",
                       },
                       {
                         transform: "scale(1)",
                         textShadow:
-                          "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                          "0 0 12px rgba(57,255,20,1), 0 0 18px rgba(57,255,20,0.7), 0 0 5px rgba(57,255,20,1)",
                         filter: "brightness(1.3) saturate(1.2)",
                       },
                     ],
@@ -696,7 +696,7 @@ export const Hero = () => {
                     "scale(1) rotate(0deg) translateY(0px)";
                   letter.style.filter = "brightness(1.3) saturate(1.2)";
                   letter.style.textShadow =
-                    "0 0 15px #39FF14, 0 0 25px #39FF14, 0 0 8px #39FF14, 0 0 40px rgba(57,255,20,0.5)";
+                    "0 0 5px #39FF14, 0 0 8px #39FF14, 0 0 3px #39FF14, 0 0 10px rgba(57,255,20,0.5)";
                   letter.classList.add("final-reveal");
                 }, 1410);
               }, i * 120); // Slightly faster stagger for more impact
@@ -970,33 +970,32 @@ export const Hero = () => {
           background-clip: text;
           opacity: 0;
           transform-origin: center;
-          -webkit-text-stroke: 0.8px rgba(0,0,0,0.3);
+          -webkit-text-stroke: 0.5px rgba(0,0,0,0.2);
           text-shadow:
-            0 0 6px #39FF14,
-            0 0 12px #39FF14;
+            0 0 2px rgba(57,255,20,0.8);
           transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease, text-shadow 420ms ease, filter 420ms ease;
           will-change: transform, opacity, filter, text-shadow;
         }
 
         .letter.gathering {
-          opacity: 0.85;
-          filter: blur(0px) brightness(1.2);
-          text-shadow: 0 0 20px rgba(57,255,20,1), 0 0 35px rgba(57,255,20,0.6), 0 0 8px rgba(57,255,20,1);
+          opacity: 0.9;
+          filter: blur(0px) brightness(1.1);
+          text-shadow: 0 0 3px rgba(57,255,20,0.8), 0 0 5px rgba(57,255,20,0.4);
           animation: letterGatherPulse 1.2s ease-in-out infinite;
         }
 
         @keyframes letterGatherPulse {
           0%, 100% { 
-            opacity: 0.75;
-            text-shadow: 0 0 18px rgba(57,255,20,0.9), 0 0 30px rgba(57,255,20,0.5), 0 0 6px rgba(57,255,20,1);
+            opacity: 0.85;
+            text-shadow: 0 0 2px rgba(57,255,20,0.7), 0 0 4px rgba(57,255,20,0.3);
             transform: scale(1);
-            filter: blur(0px) brightness(1.1);
+            filter: blur(0px) brightness(1.05);
           }
           50% { 
-            opacity: 0.95;
-            text-shadow: 0 0 25px rgba(57,255,20,1), 0 0 45px rgba(57,255,20,0.8), 0 0 12px rgba(57,255,20,1);
-            transform: scale(1.03);
-            filter: blur(0px) brightness(1.4);
+            opacity: 1;
+            text-shadow: 0 0 3px rgba(57,255,20,0.9), 0 0 6px rgba(57,255,20,0.5);
+            transform: scale(1.02);
+            filter: blur(0px) brightness(1.2);
           }
         }
 
@@ -1006,19 +1005,19 @@ export const Hero = () => {
 
         .letter.final-reveal {
           opacity: 1 !important;
-          filter: brightness(1.3) saturate(1.2) !important;
-          text-shadow: 0 0 12px #39FF14, 0 0 25px #39FF14, 0 0 6px #39FF14, 0 0 40px rgba(57,255,20,0.6) !important;
+          filter: brightness(1.1) saturate(1.1) !important;
+          text-shadow: 0 0 2px #39FF14, 0 0 4px rgba(57,255,20,0.6) !important;
           animation: finalGlow 2.5s ease-in-out infinite;
         }
 
         @keyframes finalGlow {
           0%, 100% { 
-            text-shadow: 0 0 12px #39FF14, 0 0 25px #39FF14, 0 0 6px #39FF14, 0 0 40px rgba(57,255,20,0.6);
+            text-shadow: 0 0 5px #39FF14, 0 0 8px #39FF14, 0 0 3px #39FF14, 0 0 10px rgba(57,255,20,0.6);
             filter: brightness(1.3) saturate(1.2);
             transform: scale(1);
           }
           50% { 
-            text-shadow: 0 0 18px #39FF14, 0 0 35px #39FF14, 0 0 10px #39FF14, 0 0 50px rgba(57,255,20,0.8);
+            text-shadow: 0 0 6px #39FF14, 0 0 10px #39FF14, 0 0 3px #39FF14, 0 0 12px rgba(57,255,20,0.8);
             filter: brightness(1.5) saturate(1.3);
             transform: scale(1.01);
           }
@@ -1066,7 +1065,18 @@ export const Hero = () => {
         .x-flash.flash-on { opacity: 0.65; transition: opacity 120ms ease; }
 
         .logo.snap { letter-spacing: 6px; }
-        .letter.x-final { transform: scale(0.98); transition: transform 300ms ease; }
+        .letter[data-char="X"] {
+          animation: xGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes xGlow {
+          0%, 100% { 
+            text-shadow: 0 0 5px #39FF14, 0 0 8px #39FF14, 0 0 3px #39FF14, 0 0 10px rgba(57,255,20,0.6);
+          }
+          50% { 
+            text-shadow: 0 0 10px #39FF14, 0 0 15px #39FF14, 0 0 5px #39FF14, 0 0 20px rgba(57,255,20,0.8);
+          }
+        }
         .logo.floating { 
           animation: logoFloat 8000ms ease-in-out infinite, logoBreath 4s ease-in-out infinite; 
         }
