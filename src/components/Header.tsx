@@ -54,10 +54,11 @@ export const Header = () => {
               <button
                 key={item.name}
                 onClick={() => scrollToSection(item.href)}
-                className="text-muted-foreground hover:text-primary transition-colors duration-300 relative group"
+                className="text-muted-foreground hover:text-primary transition-all duration-300 relative group flash-hover px-4 py-2 rounded-md"
               >
-                {item.name}
+                <span className="relative z-10">{item.name}</span>
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full neon-glow" />
+                <span className="absolute inset-0 rounded-md bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
             ))}
           </nav>
@@ -66,7 +67,7 @@ export const Header = () => {
           <div className="hidden md:block">
             <Button
               onClick={() => scrollToSection("#contact")}
-              className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 hover:border-primary/50 transition-all duration-300 neon-border"
+              className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 hover:border-primary/50 transition-all duration-300 neon-border shimmer pulse-hover"
             >
               Get Started
             </Button>

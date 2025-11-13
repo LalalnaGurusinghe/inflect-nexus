@@ -67,29 +67,50 @@ export const Services = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
-              className="glass p-8 rounded-lg hover:neon-border transition-all duration-300 group"
+              whileHover={{ 
+                y: -5,
+                transition: { duration: 0.3, ease: "easeOut" }
+              }}
+              className="glass p-8 rounded-lg interactive-card flash-hover glow-border shine-sweep group cursor-pointer"
             >
-              <service.icon className="w-16 h-16 text-primary mb-6 group-hover:animate-float" />
-              <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
-              <p className="text-foreground/80 mb-6">{service.description}</p>
+              <service.icon className="w-16 h-16 text-primary mb-6 group-hover:animate-float group-hover:animate-glow-pulse transition-all duration-300" />
+              <h3 className="text-2xl font-bold mb-4 group-hover:text-shimmer">
+                {service.title}
+              </h3>
+              <p className="text-foreground/80 mb-6 group-hover:text-foreground/90 transition-colors duration-300">
+                {service.description}
+              </p>
 
               <ul className="space-y-3 mb-6">
                 {service.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <span className="text-primary mr-2">▸</span>
-                    <span className="text-muted-foreground">{feature}</span>
-                  </li>
+                  <motion.li
+                    key={idx}
+                    className="flex items-start"
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.2 + idx * 0.1 }}
+                  >
+                    <span className="text-primary mr-2 group-hover:animate-pulse">
+                      ▸
+                    </span>
+                    <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                      {feature}
+                    </span>
+                  </motion.li>
                 ))}
               </ul>
 
               <div className="flex flex-wrap gap-2">
-                {service.tech.map((tech) => (
-                  <span
+                {service.tech.map((tech, techIndex) => (
+                  <motion.span
                     key={tech}
-                    className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary border border-primary/30 rounded-full"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.2 + techIndex * 0.05 }}
+                    className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary border border-primary/30 rounded-full hover:bg-primary/20 hover:border-primary/50 transition-all duration-300 btn-shine magnetic-hover"
                   >
                     {tech}
-                  </span>
+                  </motion.span>
                 ))}
               </div>
             </motion.div>
@@ -110,10 +131,17 @@ export const Services = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="glass p-6 rounded-lg text-center hover:neon-border transition-all duration-300 cursor-pointer group"
+              whileHover={{
+                scale: 1.05,
+                y: -5,
+                transition: { duration: 0.2, ease: "easeOut" },
+              }}
+              className="glass p-6 rounded-lg text-center interactive-card diagonal-shine glow-border cursor-pointer group"
             >
-              <cap.icon className="w-12 h-12 text-primary mx-auto mb-3 group-hover:animate-glow-pulse" />
-              <p className="font-semibold">{cap.label}</p>
+              <cap.icon className="w-12 h-12 text-primary mx-auto mb-3 group-hover:animate-glow-pulse group-hover:animate-float transition-all duration-300" />
+              <p className="font-semibold group-hover:text-shimmer transition-all duration-300">
+                {cap.label}
+              </p>
             </motion.div>
           ))}
         </motion.div>
