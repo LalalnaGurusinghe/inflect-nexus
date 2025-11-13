@@ -84,32 +84,69 @@ export const Hero = () => {
       const cy = oy ?? innerHeight / 2;
       for (let i = 0; i < n; i++) {
         const angle = Math.random() * Math.PI * 2;
-        const speed = (Math.random() * 8 + 3) * (mode === "scatter" ? 1 : 0.8);
+        const speed = (Math.random() * 12 + 6) * (mode === "scatter" ? 1 : 0.6);
+        const size = 1.5 + Math.random() * 3.5;
+        const hue = 100 + Math.random() * 80; // wider green to yellow range
+        const saturation = 85 + Math.random() * 15;
+        const lightness = 45 + Math.random() * 25;
+
         particles.push({
-          x: cx,
-          y: cy,
+          x: cx + (Math.random() - 0.5) * 20, // slight initial spread
+          y: cy + (Math.random() - 0.5) * 20,
           vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed * 0.7 - (mode === "scatter" ? 3 : 0),
-          life: 1000 + Math.random() * 800,
+          vy: Math.sin(angle) * speed * 0.8 - (mode === "scatter" ? 4 : 0),
+          life: 1200 + Math.random() * 1000,
           age: 0,
-          size: 2 + Math.random() * 4,
+          size,
           mode,
-          hue: 100 + Math.random() * 60, // green to yellow hues
+          hue,
+          ax: 0, // acceleration components
+          ay: mode === "scatter" ? 0.08 : 0, // gravity for scatter
         });
       }
     }
 
-    // scatterX: converts overlay X into particles that fly outward
+    // scatterX: converts overlay X into particles that fly outward with enhanced explosion
     function scatterX() {
-      // overlay center
+      // overlay center with slight randomization for more natural effect
       const rect = overlay.getBoundingClientRect();
-      const ox = rect.left + rect.width / 2;
-      const oy = rect.top + rect.height / 2;
-      // spawn many particles
-      spawnParticles(300, ox, oy, "scatter");
+      const ox = rect.left + rect.width / 2 + (Math.random() - 0.5) * 10;
+      const oy = rect.top + rect.height / 2 + (Math.random() - 0.5) * 10;
 
-      // wipe overlay visually with a short dissolve (overlay will be removed later)
-      overlay.style.transition = "opacity 520ms ease";
+      // Create multiple waves of particles for more dramatic effect
+      const totalParticles = 400;
+      const waves = 3;
+
+      for (let wave = 0; wave < waves; wave++) {
+        setTimeout(() => {
+          const particlesPerWave = Math.floor(totalParticles / waves);
+          spawnParticles(particlesPerWave, ox, oy, "scatter");
+
+          // Add some particles with different initial velocities for variety
+          for (let i = 0; i < particlesPerWave * 0.2; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 15 + 8;
+            particles.push({
+              x: ox,
+              y: oy,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed * 0.6 - 6,
+              life: 1400 + Math.random() * 800,
+              age: 0,
+              size: 1 + Math.random() * 2,
+              mode: "scatter",
+              hue: 120 + Math.random() * 60,
+              ax: 0,
+              ay: 0.12, // stronger gravity for these
+            });
+          }
+        }, wave * 50); // stagger waves
+      }
+
+      // Enhanced dissolve effect
+      overlay.style.transition =
+        "opacity 600ms cubic-bezier(.4,0,.2,1), transform 600ms cubic-bezier(.4,0,.2,1)";
+      overlay.style.transform = "translate(-50%, -50%) scale(0.8)";
       overlay.style.opacity = "0";
 
       // set existing in-flow X invisible until reformed
@@ -239,127 +276,243 @@ export const Hero = () => {
           }
 
           if (p.mode === "scatter") {
-            // normal ballistic with slight drag
-            p.vx *= 0.996;
-            p.vy += 0.04;
-            p.vy *= 0.998;
+            // Enhanced physics: gravity, air resistance, and slight turbulence
+            p.ay = p.ay || 0.08; // gravity
+            p.vx += p.ax || 0;
+            p.vy += p.ay;
+
+            // air resistance (drag)
+            p.vx *= 0.995;
+            p.vy *= 0.992;
+
+            // add slight turbulence for more natural movement
+            p.vx += (Math.random() - 0.5) * 0.1;
+            p.vy += (Math.random() - 0.5) * 0.05;
+
             p.x += p.vx * (dt / 16);
             p.y += p.vy * (dt / 16);
+
+            // boundary check - particles fade out at edges
+            if (p.x < -50 || p.x > innerWidth + 50 || p.y > innerHeight + 50) {
+              p.age = p.life; // mark for removal
+            }
           } else if (p.mode === "gather") {
-            // steering behavior toward (tx,ty) with smoother movement
+            // Advanced steering behavior with smooth convergence
             if (p.tx !== undefined && p.ty !== undefined) {
               const toX = p.tx - p.x;
               const toY = p.ty - p.y;
               const dist = Math.max(1, Math.hypot(toX, toY));
-              // acceleration magnitude depends on dist (magnetic) - stronger pull
-              const accel = Math.min(1.2, 3000 / (dist + 100));
-              // curve a bit: add perpendicular component for organic trail
+
+              // Dynamic acceleration based on distance (stronger when far, gentler when close)
+              const accel = Math.min(2.0, 4000 / (dist * dist + 200));
+
+              // Smooth steering with some organic variation
+              const steerX = (toX / dist) * accel;
+              const steerY = (toY / dist) * accel;
+
+              // Add slight perpendicular component for trailing effect
               const perpFactor =
-                0.08 * Math.sin(p.age * 0.01) * (dist > 50 ? 1 : 0); // oscillating perpendicular
-              p.vx += (toX / dist) * accel + (-toY / dist) * perpFactor;
-              p.vy += (toY / dist) * accel + (toX / dist) * perpFactor;
-              // apply stronger damping for smoother convergence
-              p.vx *= 0.92;
-              p.vy *= 0.92;
+                0.05 * Math.sin(p.age * 0.008) * Math.max(0, 1 - dist / 100);
+              p.ax = steerX + (-toY / dist) * perpFactor;
+              p.ay = steerY + (toX / dist) * perpFactor;
+
+              // Apply acceleration with momentum
+              p.vx += p.ax;
+              p.vy += p.ay;
+
+              // Adaptive damping - stronger when close to target
+              const damping = dist < 50 ? 0.85 : 0.95;
+              p.vx *= damping;
+              p.vy *= damping;
+
+              // Limit maximum speed for smoother movement
+              const maxSpeed = Math.min(8, dist * 0.1 + 2);
+              const currentSpeed = Math.hypot(p.vx, p.vy);
+              if (currentSpeed > maxSpeed) {
+                p.vx = (p.vx / currentSpeed) * maxSpeed;
+                p.vy = (p.vy / currentSpeed) * maxSpeed;
+              }
+
               p.x += p.vx * (dt / 16);
               p.y += p.vy * (dt / 16);
             } else {
+              // Fallback movement
+              p.vx *= 0.98;
+              p.vy *= 0.98;
               p.x += p.vx * (dt / 16);
               p.y += p.vy * (dt / 16);
             }
-          } else {
-            p.x += p.vx * (dt / 16);
-            p.y += p.vy * (dt / 16);
           }
 
-          // draw glowing particle with color
-          const alpha = Math.max(0, 1 - p.age / p.life);
+          // Enhanced particle rendering with professional glow effects
+          const alpha = Math.max(0, 1 - Math.pow(p.age / p.life, 0.8)); // smoother fade
           const hue = p.hue || 120;
-          const saturation = 80 + Math.random() * 20;
-          const lightness = 50 + Math.random() * 20;
+          const saturation = 90;
+          const lightness = 55;
 
-          // outer glow
+          // Create multiple layers for depth and glow
+          const glowSize = p.size * (2 + Math.sin(p.age * 0.02) * 0.3); // pulsing glow
+          const coreSize = p.size * 0.6;
+
+          // Outer glow layer
+          const gradient = ctx.createRadialGradient(
+            p.x,
+            p.y,
+            0,
+            p.x,
+            p.y,
+            glowSize
+          );
+          gradient.addColorStop(
+            0,
+            `hsla(${hue}, ${saturation}%, ${lightness + 20}%, ${alpha * 0.4})`
+          );
+          gradient.addColorStop(
+            0.3,
+            `hsla(${hue}, ${saturation}%, ${lightness + 10}%, ${alpha * 0.6})`
+          );
+          gradient.addColorStop(
+            0.7,
+            `hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha * 0.3})`
+          );
+          gradient.addColorStop(
+            1,
+            `hsla(${hue}, ${saturation}%, ${lightness - 10}%, 0)`
+          );
+
           ctx.beginPath();
-          ctx.fillStyle = `hsla(${hue}, ${saturation}%, ${lightness}%, ${
-            alpha * 0.3
-          })`;
-          ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+          ctx.fillStyle = gradient;
+          ctx.arc(p.x, p.y, glowSize, 0, Math.PI * 2);
           ctx.fill();
 
-          // inner core
+          // Inner bright core
           ctx.beginPath();
-          ctx.fillStyle = `hsla(${hue}, ${saturation}%, ${
-            lightness + 20
-          }%, ${alpha})`;
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${hue}, ${saturation + 10}%, ${
+            lightness + 30
+          }%, ${alpha * 0.9})`;
+          ctx.arc(p.x, p.y, coreSize, 0, Math.PI * 2);
           ctx.fill();
+
+          // Add sparkle effect for larger particles
+          if (p.size > 2.5 && Math.random() < 0.1) {
+            ctx.beginPath();
+            ctx.fillStyle = `hsla(${hue + 30}, 100%, 90%, ${alpha * 0.8})`;
+            ctx.arc(
+              p.x + (Math.random() - 0.5) * p.size,
+              p.y + (Math.random() - 0.5) * p.size,
+              p.size * 0.2,
+              0,
+              Math.PI * 2
+            );
+            ctx.fill();
+          }
         }
 
-        // check gather completion: when many particles near their targets
+        // Enhanced gather completion: more sophisticated convergence detection
         if (
           !gatherComplete &&
           particles.length > 0 &&
           particles[0].mode === "gather"
         ) {
-          // compute average distance to targets
+          // Calculate convergence metrics
           let totalDist = 0;
           let count = 0;
+          let convergedCount = 0;
+          const convergenceThreshold = 12;
+
           for (const p of particles) {
             if (p.tx !== undefined && p.ty !== undefined) {
               const d = Math.hypot(p.x - p.tx, p.y - p.ty);
               totalDist += d;
               count++;
+              if (d < convergenceThreshold) convergedCount++;
             }
           }
+
           const avgDist = count > 0 ? totalDist / count : 0;
-          // if average distance is small, finalize
-          if (avgDist < 15) {
+          const convergenceRatio = count > 0 ? convergedCount / count : 0;
+
+          // Trigger completion when most particles are close to targets
+          if (avgDist < 20 && convergenceRatio > 0.85) {
             gatherComplete = true;
-            // reveal letters in sequence with smooth animation
+
+            // Enhanced letter reveal with professional animation
             const letters = Array.from(
               root.querySelectorAll<HTMLElement>(".letter")
             );
+
             letters.forEach((letter, i) => {
               setTimeout(() => {
                 letter.classList.add("show");
+
+                // Sophisticated reveal animation
                 letter.animate(
                   [
                     {
                       opacity: 0,
-                      transform: "scale(1.4) rotate(5deg)",
-                      filter: "blur(8px) brightness(1.5)",
+                      transform: "scale(1.3) rotate(8deg) translateY(10px)",
+                      filter: "blur(6px) brightness(1.4) saturate(1.2)",
+                      textShadow: "0 0 20px rgba(57,255,20,0.8)",
                     },
                     {
-                      opacity: 0.7,
-                      transform: "scale(1.1) rotate(0deg)",
-                      filter: "blur(2px) brightness(1.2)",
+                      opacity: 0.6,
+                      transform: "scale(1.1) rotate(2deg) translateY(2px)",
+                      filter: "blur(2px) brightness(1.2) saturate(1.1)",
+                      textShadow: "0 0 15px rgba(57,255,20,0.6)",
                     },
-                    { opacity: 1, transform: "scale(1)", filter: "none" },
+                    {
+                      opacity: 1,
+                      transform: "scale(1) rotate(0deg) translateY(0px)",
+                      filter: "blur(0px) brightness(1) saturate(1)",
+                      textShadow: "0 0 3px rgba(57,255,20,0.3)",
+                    },
                   ],
                   {
-                    duration: 600,
-                    easing: "cubic-bezier(.2,.9,.2,1)",
+                    duration: 800,
+                    easing: "cubic-bezier(.25,.46,.45,.94)",
                     fill: "forwards",
                   }
                 );
-                // ensure final styles
+
+                // Ensure final styles
                 setTimeout(() => {
                   letter.style.opacity = "1";
-                  letter.style.transform = "scale(1)";
+                  letter.style.transform =
+                    "scale(1) rotate(0deg) translateY(0px)";
                   letter.style.filter = "none";
-                }, 610);
-              }, i * 120); // stagger reveal
+                  letter.style.textShadow = "0 0 3px #39FF14, 0 0 6px #39FF14";
+                }, 810);
+              }, i * 150); // Slightly longer stagger for more dramatic effect
             });
-            // micro particle merge effect at the targets
+
+            // Create convergence spark effects
             particles.forEach((p) => {
-              if (p.tx && p.ty) {
-                spawnParticles(8, p.tx, p.ty, "gather");
+              if (p.tx && p.ty && Math.random() < 0.3) {
+                // Spawn mini spark particles at convergence points
+                for (let i = 0; i < 5; i++) {
+                  const angle = Math.random() * Math.PI * 2;
+                  const speed = Math.random() * 3 + 1;
+                  particles.push({
+                    x: p.tx,
+                    y: p.ty,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    life: 400 + Math.random() * 200,
+                    age: 0,
+                    size: 0.5 + Math.random() * 1,
+                    mode: "scatter",
+                    hue: 140 + Math.random() * 40,
+                    ax: 0,
+                    ay: 0.05,
+                  });
+                }
               }
             });
-            // remove remaining canvas particles after the reveal finishes
+
+            // Clear particles after reveal completes
             setTimeout(() => {
               particles.length = 0;
-            }, 800);
+            }, 1200);
           }
         }
       }
@@ -604,8 +757,8 @@ export const Hero = () => {
           text-shadow:
             0 0 3px #39FF14,
             0 0 6px #39FF14;
-          transition: transform 520ms cubic-bezier(.25,.46,.45,.94), opacity 320ms cubic-bezier(.25,.46,.45,.94), text-shadow 520ms cubic-bezier(.25,.46,.45,.94), filter 520ms cubic-bezier(.25,.46,.45,.94);
-          will-change: transform, opacity, filter;
+          transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease, text-shadow 420ms ease;
+          will-change: transform, opacity;
         }
 
         .from-left { transform: translateX(-300px) translateY(6px) scale(0.98); }
