@@ -17,6 +17,7 @@ type Particle = {
   ax?: number;
   ay?: number;
   hue?: number;
+  buildingX?: boolean;
 };
 
 export const Hero = () => {
@@ -32,6 +33,48 @@ export const Hero = () => {
     const logo = root.querySelector<HTMLElement>(".logo");
     const meta = root.querySelector<HTMLElement>(".meta");
     const canvas = root.querySelector<HTMLCanvasElement>(".particles");
+
+    // Function to generate X shape points for particles to form
+    function generateXShapePoints(
+      centerX: number,
+      centerY: number,
+      size: number
+    ) {
+      const points = [];
+      const halfSize = size / 2;
+      const thickness = 4; // thickness of the X lines
+
+      // Generate points along the two diagonal lines of the X
+      for (let i = 0; i <= 20; i++) {
+        const t = i / 20; // parameter from 0 to 1
+
+        // First diagonal (top-left to bottom-right)
+        const x1 = centerX - halfSize + t * size;
+        const y1 = centerY - halfSize + t * size;
+
+        // Add multiple points around the line for thickness
+        for (let j = -thickness; j <= thickness; j++) {
+          points.push({
+            x: x1 + j * Math.cos(Math.PI / 4),
+            y: y1 - j * Math.sin(Math.PI / 4),
+          });
+        }
+
+        // Second diagonal (top-right to bottom-left)
+        const x2 = centerX + halfSize - t * size;
+        const y2 = centerY - halfSize + t * size;
+
+        // Add multiple points around the line for thickness
+        for (let j = -thickness; j <= thickness; j++) {
+          points.push({
+            x: x2 + j * Math.cos(-Math.PI / 4),
+            y: y2 - j * Math.sin(-Math.PI / 4),
+          });
+        }
+      }
+
+      return points;
+    }
 
     const reduced =
       window.matchMedia &&
@@ -187,17 +230,98 @@ export const Hero = () => {
         }
       }
 
-      // assign target to each particle and switch to gather mode
-      let targetIndex = 0;
-      particles.forEach((p) => {
-        p.mode = "gather";
-        p.tx = targets[targetIndex].x + (Math.random() - 0.5) * 20; // small jitter
-        p.ty = targets[targetIndex].y + (Math.random() - 0.5) * 20;
-        p.ax = 0;
-        p.ay = 0;
-        // reduce life to keep them alive long enough for gather
-        p.life = Math.max(p.life, 1200);
-        targetIndex = (targetIndex + 1) % targets.length;
+      // Special handling for X letter - assign more particles to build the X
+      const xLetter = letters.find((l) => l.getAttribute("data-char") === "X");
+      const xIndex = letters.findIndex(
+        (l) => l.getAttribute("data-char") === "X"
+      );
+
+      if (xLetter && xIndex !== -1) {
+        const xTarget = targets[xIndex];
+
+        // Create detailed X shape points for particles to form
+        const xShapePoints = generateXShapePoints(xTarget.x, xTarget.y, 40); // 40px X size
+
+        // Assign 60% of particles to build the X specifically
+        const xParticleCount = Math.floor(particles.length * 0.6);
+        let xPointIndex = 0;
+
+        particles.forEach((p, index) => {
+          p.mode = "gather";
+          p.ax = 0;
+          p.ay = 0;
+          p.life = Math.max(p.life, 1500); // longer life for X building
+
+          if (index < xParticleCount) {
+            // Particles for building the X
+            const xPoint = xShapePoints[xPointIndex % xShapePoints.length];
+            p.tx = xPoint.x + (Math.random() - 0.5) * 8; // tighter grouping
+            p.ty = xPoint.y + (Math.random() - 0.5) * 8;
+            p.buildingX = true; // special flag for X building particles
+            xPointIndex++;
+          } else {
+            // Remaining particles for other letters
+            const otherLetterIndex = index % (targets.length - 1);
+            const actualIndex =
+              otherLetterIndex >= xIndex
+                ? otherLetterIndex + 1
+                : otherLetterIndex;
+            p.tx = targets[actualIndex].x + (Math.random() - 0.5) * 20;
+            p.ty = targets[actualIndex].y + (Math.random() - 0.5) * 20;
+          }
+        });
+      } else {
+        // Fallback to original behavior if X not found
+        let targetIndex = 0;
+        particles.forEach((p) => {
+          p.mode = "gather";
+          p.tx = targets[targetIndex].x + (Math.random() - 0.5) * 20;
+          p.ty = targets[targetIndex].y + (Math.random() - 0.5) * 20;
+          p.ax = 0;
+          p.ay = 0;
+          p.life = Math.max(p.life, 1200);
+          targetIndex = (targetIndex + 1) % targets.length;
+        });
+      }
+
+      // Start revealing letters early during gathering phase with enhanced visibility
+      // But keep X hidden until particles build it
+      letters.forEach((letter, i) => {
+        const isX = letter.getAttribute("data-char") === "X";
+
+        if (!isX) {
+          setTimeout(() => {
+            // Add gathering class for pulsing effect
+            letter.classList.add("gathering");
+
+            letter.animate(
+              [
+                {
+                  opacity: 0,
+                  transform: "scale(1.5) translateY(20px)",
+                  filter: "blur(8px) brightness(1.5)",
+                  textShadow:
+                    "0 0 30px rgba(57,255,20,1), 0 0 50px rgba(57,255,20,0.6)",
+                },
+                {
+                  opacity: 0.85,
+                  transform: "scale(1.02) translateY(0px)",
+                  filter: "blur(0px) brightness(1.2)",
+                  textShadow:
+                    "0 0 20px rgba(57,255,20,1), 0 0 35px rgba(57,255,20,0.6), 0 0 8px rgba(57,255,20,1)",
+                },
+              ],
+              {
+                duration: 900,
+                easing: "cubic-bezier(.25,.46,.45,.94)",
+                fill: "forwards",
+              }
+            );
+          }, i * 70); // Faster stagger for more dynamic effect
+        } else {
+          // Keep X completely hidden initially - it will be built by particles
+          letter.style.opacity = "0";
+        }
       });
 
       // play recharge audio & brief flash
@@ -297,36 +421,36 @@ export const Hero = () => {
               p.age = p.life; // mark for removal
             }
           } else if (p.mode === "gather") {
-            // Advanced steering behavior with smooth convergence
+            // Enhanced steering behavior with more visible particle streams
             if (p.tx !== undefined && p.ty !== undefined) {
               const toX = p.tx - p.x;
               const toY = p.ty - p.y;
               const dist = Math.max(1, Math.hypot(toX, toY));
 
-              // Dynamic acceleration based on distance (stronger when far, gentler when close)
-              const accel = Math.min(2.0, 4000 / (dist * dist + 200));
+              // Enhanced acceleration for more dramatic gathering
+              const accel = Math.min(3.5, 6000 / (dist * dist + 150));
 
-              // Smooth steering with some organic variation
+              // Smooth steering with enhanced organic variation for visible trails
               const steerX = (toX / dist) * accel;
               const steerY = (toY / dist) * accel;
 
-              // Add slight perpendicular component for trailing effect
+              // Enhanced perpendicular component for more dramatic trailing effect
               const perpFactor =
-                0.05 * Math.sin(p.age * 0.008) * Math.max(0, 1 - dist / 100);
+                0.12 * Math.sin(p.age * 0.012) * Math.max(0, 1 - dist / 120);
               p.ax = steerX + (-toY / dist) * perpFactor;
               p.ay = steerY + (toX / dist) * perpFactor;
 
-              // Apply acceleration with momentum
+              // Apply acceleration with enhanced momentum
               p.vx += p.ax;
               p.vy += p.ay;
 
-              // Adaptive damping - stronger when close to target
-              const damping = dist < 50 ? 0.85 : 0.95;
+              // Adaptive damping - less aggressive for more visible movement
+              const damping = dist < 40 ? 0.88 : 0.96;
               p.vx *= damping;
               p.vy *= damping;
 
-              // Limit maximum speed for smoother movement
-              const maxSpeed = Math.min(8, dist * 0.1 + 2);
+              // Enhanced maximum speed for more dramatic gathering
+              const maxSpeed = Math.min(12, dist * 0.15 + 3);
               const currentSpeed = Math.hypot(p.vx, p.vy);
               if (currentSpeed > maxSpeed) {
                 p.vx = (p.vx / currentSpeed) * maxSpeed;
@@ -335,6 +459,25 @@ export const Hero = () => {
 
               p.x += p.vx * (dt / 16);
               p.y += p.vy * (dt / 16);
+
+              // Add particle trail effect for gathering
+              if (Math.random() < 0.15 && dist > 50) {
+                particles.push({
+                  x: p.x - p.vx * 0.3,
+                  y: p.y - p.vy * 0.3,
+                  vx: p.vx * 0.5,
+                  vy: p.vy * 0.5,
+                  life: 300,
+                  age: 0,
+                  size: p.size * 0.5,
+                  mode: "gather",
+                  hue: p.hue,
+                  tx: p.tx,
+                  ty: p.ty,
+                  ax: 0,
+                  ay: 0,
+                });
+              }
             } else {
               // Fallback movement
               p.vx *= 0.98;
@@ -345,14 +488,20 @@ export const Hero = () => {
           }
 
           // Enhanced particle rendering with professional glow effects
-          const alpha = Math.max(0, 1 - Math.pow(p.age / p.life, 0.8)); // smoother fade
+          const alpha = Math.max(0, 1 - Math.pow(p.age / p.life, 0.6)); // slower fade for better visibility
           const hue = p.hue || 120;
-          const saturation = 90;
-          const lightness = 55;
 
-          // Create multiple layers for depth and glow
-          const glowSize = p.size * (2 + Math.sin(p.age * 0.02) * 0.3); // pulsing glow
-          const coreSize = p.size * 0.6;
+          // Special rendering for X-building particles
+          const isXBuilding = p.buildingX === true;
+          const saturation = isXBuilding ? 100 : p.mode === "gather" ? 95 : 90; // brightest for X building
+          const lightness = isXBuilding ? 75 : p.mode === "gather" ? 65 : 55; // brightest for X building
+
+          // Create multiple layers for depth and glow - enhanced for X building
+          const glowMultiplier = isXBuilding ? 4 : p.mode === "gather" ? 3 : 2;
+          const glowSize =
+            p.size * (glowMultiplier + Math.sin(p.age * 0.03) * 0.4); // more intense pulsing glow
+          const coreSize =
+            p.size * (isXBuilding ? 1.0 : p.mode === "gather" ? 0.8 : 0.6); // largest core for X building
 
           // Outer glow layer
           const gradient = ctx.createRadialGradient(
@@ -414,11 +563,11 @@ export const Hero = () => {
           particles.length > 0 &&
           particles[0].mode === "gather"
         ) {
-          // Calculate convergence metrics
+          // Calculate convergence metrics with improved thresholds
           let totalDist = 0;
           let count = 0;
           let convergedCount = 0;
-          const convergenceThreshold = 12;
+          const convergenceThreshold = 15; // slightly more lenient
 
           for (const p of particles) {
             if (p.tx !== undefined && p.ty !== undefined) {
@@ -432,8 +581,8 @@ export const Hero = () => {
           const avgDist = count > 0 ? totalDist / count : 0;
           const convergenceRatio = count > 0 ? convergedCount / count : 0;
 
-          // Trigger completion when most particles are close to targets
-          if (avgDist < 20 && convergenceRatio > 0.85) {
+          // More responsive trigger completion when particles are close to targets
+          if (avgDist < 25 && convergenceRatio > 0.75) {
             gatherComplete = true;
 
             // Enhanced letter reveal with professional animation
@@ -441,48 +590,116 @@ export const Hero = () => {
               root.querySelectorAll<HTMLElement>(".letter")
             );
 
+            // Create a dramatic name reveal effect
             letters.forEach((letter, i) => {
               setTimeout(() => {
+                // Remove gathering class and add show class
+                letter.classList.remove("gathering");
                 letter.classList.add("show");
 
-                // Sophisticated reveal animation
+                // Enhanced reveal animation with more dramatic effects
                 letter.animate(
                   [
                     {
-                      opacity: 0,
-                      transform: "scale(1.3) rotate(8deg) translateY(10px)",
-                      filter: "blur(6px) brightness(1.4) saturate(1.2)",
-                      textShadow: "0 0 20px rgba(57,255,20,0.8)",
+                      opacity: 0.85,
+                      transform: "scale(1.1) rotate(6deg) translateY(8px)",
+                      filter: "blur(0px) brightness(1.3) saturate(1.2)",
+                      textShadow:
+                        "0 0 20px rgba(57,255,20,0.8), 0 0 35px rgba(57,255,20,0.5)",
                     },
                     {
-                      opacity: 0.6,
-                      transform: "scale(1.1) rotate(2deg) translateY(2px)",
-                      filter: "blur(2px) brightness(1.2) saturate(1.1)",
-                      textShadow: "0 0 15px rgba(57,255,20,0.6)",
+                      opacity: 1,
+                      transform: "scale(1.4) rotate(-3deg) translateY(-8px)",
+                      filter: "blur(0px) brightness(2) saturate(1.5)",
+                      textShadow:
+                        "0 0 50px rgba(57,255,20,1), 0 0 70px rgba(57,255,20,0.8), 0 0 20px rgba(57,255,20,1)",
                     },
                     {
                       opacity: 1,
                       transform: "scale(1) rotate(0deg) translateY(0px)",
-                      filter: "blur(0px) brightness(1) saturate(1)",
-                      textShadow: "0 0 3px rgba(57,255,20,0.3)",
+                      filter: "blur(0px) brightness(1.3) saturate(1.2)",
+                      textShadow:
+                        "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
                     },
                   ],
                   {
-                    duration: 800,
+                    duration: 1400,
                     easing: "cubic-bezier(.25,.46,.45,.94)",
                     fill: "forwards",
                   }
                 );
 
-                // Ensure final styles
+                // Add multiple pulse effects to make the name more prominent
+                setTimeout(() => {
+                  letter.animate(
+                    [
+                      {
+                        transform: "scale(1)",
+                        textShadow:
+                          "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                        filter: "brightness(1.3) saturate(1.2)",
+                      },
+                      {
+                        transform: "scale(1.12)",
+                        textShadow:
+                          "0 0 30px rgba(57,255,20,1), 0 0 50px rgba(57,255,20,0.9), 0 0 15px rgba(57,255,20,1)",
+                        filter: "brightness(1.6) saturate(1.4)",
+                      },
+                      {
+                        transform: "scale(1)",
+                        textShadow:
+                          "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                        filter: "brightness(1.3) saturate(1.2)",
+                      },
+                    ],
+                    {
+                      duration: 600,
+                      easing: "ease-in-out",
+                    }
+                  );
+                }, 500);
+
+                // Second pulse for emphasis
+                setTimeout(() => {
+                  letter.animate(
+                    [
+                      {
+                        transform: "scale(1)",
+                        textShadow:
+                          "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                        filter: "brightness(1.3) saturate(1.2)",
+                      },
+                      {
+                        transform: "scale(1.08)",
+                        textShadow:
+                          "0 0 25px rgba(57,255,20,1), 0 0 40px rgba(57,255,20,0.8), 0 0 12px rgba(57,255,20,1)",
+                        filter: "brightness(1.5) saturate(1.3)",
+                      },
+                      {
+                        transform: "scale(1)",
+                        textShadow:
+                          "0 0 18px rgba(57,255,20,1), 0 0 30px rgba(57,255,20,0.7), 0 0 8px rgba(57,255,20,1)",
+                        filter: "brightness(1.3) saturate(1.2)",
+                      },
+                    ],
+                    {
+                      duration: 500,
+                      easing: "ease-in-out",
+                    }
+                  );
+                }, 900);
+
+                // Ensure final styles with enhanced glow and full opacity
                 setTimeout(() => {
                   letter.style.opacity = "1";
                   letter.style.transform =
                     "scale(1) rotate(0deg) translateY(0px)";
-                  letter.style.filter = "none";
-                  letter.style.textShadow = "0 0 3px #39FF14, 0 0 6px #39FF14";
-                }, 810);
-              }, i * 150); // Slightly longer stagger for more dramatic effect
+                  letter.style.filter = "brightness(1.3) saturate(1.2)";
+                  letter.style.textShadow =
+                    "0 0 15px #39FF14, 0 0 25px #39FF14, 0 0 8px #39FF14, 0 0 40px rgba(57,255,20,0.5)";
+                  letter.classList.add("final-reveal");
+                }, 1410);
+              }, i * 120); // Slightly faster stagger for more impact
             });
 
             // Create convergence spark effects
@@ -753,17 +970,59 @@ export const Hero = () => {
           background-clip: text;
           opacity: 0;
           transform-origin: center;
-          -webkit-text-stroke: 0.6px rgba(0,0,0,0.2);
+          -webkit-text-stroke: 0.8px rgba(0,0,0,0.3);
           text-shadow:
-            0 0 3px #39FF14,
-            0 0 6px #39FF14;
-          transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease, text-shadow 420ms ease;
-          will-change: transform, opacity;
+            0 0 6px #39FF14,
+            0 0 12px #39FF14;
+          transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease, text-shadow 420ms ease, filter 420ms ease;
+          will-change: transform, opacity, filter, text-shadow;
+        }
+
+        .letter.gathering {
+          opacity: 0.85;
+          filter: blur(0px) brightness(1.2);
+          text-shadow: 0 0 20px rgba(57,255,20,1), 0 0 35px rgba(57,255,20,0.6), 0 0 8px rgba(57,255,20,1);
+          animation: letterGatherPulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes letterGatherPulse {
+          0%, 100% { 
+            opacity: 0.75;
+            text-shadow: 0 0 18px rgba(57,255,20,0.9), 0 0 30px rgba(57,255,20,0.5), 0 0 6px rgba(57,255,20,1);
+            transform: scale(1);
+            filter: blur(0px) brightness(1.1);
+          }
+          50% { 
+            opacity: 0.95;
+            text-shadow: 0 0 25px rgba(57,255,20,1), 0 0 45px rgba(57,255,20,0.8), 0 0 12px rgba(57,255,20,1);
+            transform: scale(1.03);
+            filter: blur(0px) brightness(1.4);
+          }
         }
 
         .from-left { transform: translateX(-300px) translateY(6px) scale(0.98); }
         .from-right { transform: translateX(300px) translateY(6px) scale(0.98); }
         .letter.show { opacity: 1; transform: translateX(0) translateY(0) scale(1); }
+
+        .letter.final-reveal {
+          opacity: 1 !important;
+          filter: brightness(1.3) saturate(1.2) !important;
+          text-shadow: 0 0 12px #39FF14, 0 0 25px #39FF14, 0 0 6px #39FF14, 0 0 40px rgba(57,255,20,0.6) !important;
+          animation: finalGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes finalGlow {
+          0%, 100% { 
+            text-shadow: 0 0 12px #39FF14, 0 0 25px #39FF14, 0 0 6px #39FF14, 0 0 40px rgba(57,255,20,0.6);
+            filter: brightness(1.3) saturate(1.2);
+            transform: scale(1);
+          }
+          50% { 
+            text-shadow: 0 0 18px #39FF14, 0 0 35px #39FF14, 0 0 10px #39FF14, 0 0 50px rgba(57,255,20,0.8);
+            filter: brightness(1.5) saturate(1.3);
+            transform: scale(1.01);
+          }
+        }
 
         .overlay-x {
           position: fixed;
