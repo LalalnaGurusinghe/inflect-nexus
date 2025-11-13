@@ -7,27 +7,27 @@ const achievements = [
     title: "5 Pilot Projects",
     description: "Successfully delivered in Q2 2025",
     metric: "100%",
-    label: "Client Satisfaction"
+    label: "Client Satisfaction",
   },
   {
     icon: TrendingUp,
     title: "200% Growth",
     description: "Client base expansion in first year",
     metric: "3x",
-    label: "Revenue Growth"
+    label: "Revenue Growth",
   },
   {
     icon: Award,
     title: "Industry Recognition",
     description: "Emerging Tech Startup Award 2025",
     metric: "Top 10",
-    label: "Sri Lankan Startups"
-  }
+    label: "Sri Lankan Startups",
+  },
 ];
 
 export const Portfolio = () => {
   return (
-    <section className="py-24 relative">
+    <section className="py-24 relative" id="portfolio">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -55,10 +55,16 @@ export const Portfolio = () => {
             >
               <achievement.icon className="w-16 h-16 text-primary mx-auto mb-6 group-hover:animate-float" />
               <h3 className="text-2xl font-bold mb-3">{achievement.title}</h3>
-              <p className="text-muted-foreground mb-6">{achievement.description}</p>
+              <p className="text-muted-foreground mb-6">
+                {achievement.description}
+              </p>
               <div className="border-t border-primary/20 pt-6">
-                <div className="text-4xl font-black text-primary mb-2">{achievement.metric}</div>
-                <div className="text-sm text-foreground/60">{achievement.label}</div>
+                <div className="text-4xl font-black text-primary mb-2">
+                  {achievement.metric}
+                </div>
+                <div className="text-sm text-foreground/60">
+                  {achievement.label}
+                </div>
               </div>
             </motion.div>
           ))}
@@ -71,13 +77,18 @@ export const Portfolio = () => {
           viewport={{ once: true }}
           className="glass p-10 rounded-lg mt-16"
         >
-          <h3 className="text-3xl font-bold mb-6 text-center">Featured Success Story</h3>
+          <h3 className="text-3xl font-bold mb-6 text-center">
+            Featured Success Story
+          </h3>
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <h4 className="text-2xl font-bold mb-4 text-primary">AI-Powered Analytics Platform</h4>
+              <h4 className="text-2xl font-bold mb-4 text-primary">
+                AI-Powered Analytics Platform
+              </h4>
               <p className="text-foreground/80 mb-4 leading-relaxed">
-                Developed a comprehensive machine learning solution for a leading Sri Lankan enterprise, 
-                enabling real-time predictive analytics and reducing operational costs by 45%.
+                Developed a comprehensive machine learning solution for a
+                leading Sri Lankan enterprise, enabling real-time predictive
+                analytics and reducing operational costs by 45%.
               </p>
               <ul className="space-y-2">
                 <li className="flex items-center">
@@ -97,15 +108,23 @@ export const Portfolio = () => {
             <div className="space-y-4">
               <div className="border border-primary/30 rounded-lg p-6">
                 <div className="text-4xl font-bold text-primary mb-2">45%</div>
-                <div className="text-sm text-muted-foreground">Cost Reduction</div>
+                <div className="text-sm text-muted-foreground">
+                  Cost Reduction
+                </div>
               </div>
               <div className="border border-primary/30 rounded-lg p-6">
                 <div className="text-4xl font-bold text-primary mb-2">94%</div>
-                <div className="text-sm text-muted-foreground">Model Accuracy</div>
+                <div className="text-sm text-muted-foreground">
+                  Model Accuracy
+                </div>
               </div>
               <div className="border border-primary/30 rounded-lg p-6">
-                <div className="text-4xl font-bold text-primary mb-2">3 Months</div>
-                <div className="text-sm text-muted-foreground">Delivery Time</div>
+                <div className="text-4xl font-bold text-primary mb-2">
+                  3 Months
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Delivery Time
+                </div>
               </div>
             </div>
           </div>

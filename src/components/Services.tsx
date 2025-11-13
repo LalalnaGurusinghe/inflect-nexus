@@ -5,29 +5,31 @@ const services = [
   {
     icon: Code2,
     title: "Web & Mobile App Development",
-    description: "Full-stack applications with real-time features and scalable architecture",
+    description:
+      "Full-stack applications with real-time features and scalable architecture",
     features: [
       "React, Next.js, Flutter development",
       "Real-time data synchronization",
       "Cloud-native architecture",
       "Progressive Web Apps (PWA)",
-      "API development & integration"
+      "API development & integration",
     ],
-    tech: ["React", "Flutter", "Node.js", "MongoDB", "AWS"]
+    tech: ["React", "Flutter", "Node.js", "MongoDB", "AWS"],
   },
   {
     icon: Brain,
     title: "AI & Machine Learning Solutions",
-    description: "Intelligent automation and predictive analytics to transform your business",
+    description:
+      "Intelligent automation and predictive analytics to transform your business",
     features: [
       "Predictive analytics & forecasting",
       "Natural Language Processing (NLP)",
       "Computer Vision solutions",
       "Custom ML model development",
-      "Intelligent process automation"
+      "Intelligent process automation",
     ],
-    tech: ["TensorFlow", "PyTorch", "OpenAI", "LangChain", "Python"]
-  }
+    tech: ["TensorFlow", "PyTorch", "OpenAI", "LangChain", "Python"],
+  },
 ];
 
 const capabilities = [
@@ -39,7 +41,7 @@ const capabilities = [
 
 export const Services = () => {
   return (
-    <section className="py-24 relative">
+    <section className="py-24 relative" id="services">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -51,7 +53,8 @@ export const Services = () => {
           <h2 className="text-4xl md:text-5xl font-bold mb-6">Our Services</h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6 neon-glow" />
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Cutting-edge solutions that blend innovation with practical business impact
+            Cutting-edge solutions that blend innovation with practical business
+            impact
           </p>
         </motion.div>
 
@@ -69,7 +72,7 @@ export const Services = () => {
               <service.icon className="w-16 h-16 text-primary mb-6 group-hover:animate-float" />
               <h3 className="text-2xl font-bold mb-4">{service.title}</h3>
               <p className="text-foreground/80 mb-6">{service.description}</p>
-              
+
               <ul className="space-y-3 mb-6">
                 {service.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start">
@@ -81,7 +84,7 @@ export const Services = () => {
 
               <div className="flex flex-wrap gap-2">
                 {service.tech.map((tech) => (
-                  <span 
+                  <span
                     key={tech}
                     className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary border border-primary/30 rounded-full"
                   >
