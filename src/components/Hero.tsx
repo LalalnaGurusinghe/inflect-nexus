@@ -830,7 +830,7 @@ export const Hero = () => {
   return (
     <section
       ref={rootRef}
-      className="hero"
+      className="hero font-heading"
       id="home"
       aria-labelledby="hero-logo"
       style={{
@@ -842,7 +842,11 @@ export const Hero = () => {
       <div className="bg-overlay" aria-hidden />
 
       <div className="inner" aria-hidden={false}>
-        <h1 id="hero-logo" className="logo" aria-label="InflectiveX">
+        <h1
+          id="hero-logo"
+          className="logo brand-highlight"
+          aria-label="InflectiveX"
+        >
           <span className="letter" data-char="I">
             I
           </span>
@@ -902,8 +906,6 @@ export const Hero = () => {
       </div>
 
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
         :root {
           --neon: #39FF14;
           --bg: #03040a;
@@ -938,9 +940,8 @@ export const Hero = () => {
           box-sizing: border-box;
         }
 
-        /* Logo typography: modern professional font */
+        /* Logo typography: use project's heading font (Tailwind font-heading) */
         .logo {
-          font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
           font-weight: 900;
           font-size: 140px;
           line-height: 1;
@@ -1033,7 +1034,6 @@ export const Hero = () => {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          font-family: 'Poppins', sans-serif;
           font-weight: 900;
           pointer-events: none;
           text-shadow:
@@ -1127,7 +1127,6 @@ export const Hero = () => {
           }
         }
         .subtitle { 
-          font-family: 'Poppins', sans-serif; 
           font-weight: 600; 
           font-size: 28px; 
           letter-spacing: 1px; 

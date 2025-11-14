@@ -113,6 +113,19 @@ All colors MUST be HSL.
                 0 0 40px hsl(var(--neon-glow) / 0.3);
   }
 
+  /* Brand highlight for InflectiveX logo across header and hero */
+  .brand-highlight {
+    background: linear-gradient(90deg, hsl(var(--neon-glow)), hsl(var(--primary)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-shadow: 0 0 8px hsl(var(--neon-glow) / 0.95), 0 0 20px hsl(var(--neon-glow) / 0.45);
+    font-weight: 800;
+    letter-spacing: 0.6px;
+  }
+
+
   /* Flash line hover effects */
   .flash-hover {
     position: relative;

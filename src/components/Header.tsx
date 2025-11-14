@@ -33,7 +33,7 @@ export const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 font-heading ${
         isScrolled
           ? "glass backdrop-blur-xl border-b border-white/10 neon-border"
           : "bg-transparent"
@@ -43,7 +43,7 @@ export const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-muted-foreground hidden sm:block">
+            <span className="hidden sm:block brand-highlight font-heading text-sm">
               InflectiveX
             </span>
           </div>
