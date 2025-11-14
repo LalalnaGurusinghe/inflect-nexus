@@ -151,6 +151,22 @@ export const Hero = () => {
 
     // scatterX: converts overlay X into particles that fly outward with enhanced explosion
     function scatterX() {
+      // Create a gradual, organic black background transition that feels like it's forming from particles
+      try {
+        // Start immediate gradual fading - no delay to avoid lag
+        root.classList.add("bg-forming");
+
+        // Faster transition to intermediate stage for smoother progression
+        setTimeout(() => {
+          root.classList.add("bg-darkening");
+        }, 150);
+
+        // Final black stage after particles have spread more
+        setTimeout(() => {
+          root.classList.remove("bg-forming");
+          root.classList.add("bg-black");
+        }, 600);
+      } catch (e) {}
       // overlay center with slight randomization for more natural effect
       const rect = overlay.getBoundingClientRect();
       const ox = rect.left + rect.width / 2 + (Math.random() - 0.5) * 10;
@@ -730,6 +746,17 @@ export const Hero = () => {
             setTimeout(() => {
               particles.length = 0;
             }, 1200);
+
+            // Smoothly restore the hero background after the X has reformed
+            try {
+              // short delay so the reveal animations read nicely before restoring
+              setTimeout(() => {
+                root.classList.remove("bg-black", "bg-darkening");
+                root.classList.add("bg-revealed");
+                // remove the temporary revealed marker after the transition finishes
+                setTimeout(() => root.classList.remove("bg-revealed"), 1400); // match CSS transition time
+              }, 600);
+            } catch (e) {}
           }
         }
       }
@@ -793,6 +820,12 @@ export const Hero = () => {
         try {
           overlay.remove();
         } catch {}
+        try {
+          // ensure background is restored in the fallback finalization
+          root.classList.remove("bg-black", "bg-forming", "bg-darkening");
+          root.classList.add("bg-revealed");
+          setTimeout(() => root.classList.remove("bg-revealed"), 1400); // match CSS transition time
+        } catch {}
       }, finalizeAt)
     );
 
@@ -833,11 +866,14 @@ export const Hero = () => {
       className="hero font-heading"
       id="home"
       aria-labelledby="hero-logo"
-      style={{
-        backgroundImage: `radial-gradient(1200px 500px at 50% 20%, rgba(57,255,20,0.02), transparent 10%), url(${heroBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      style={
+        {
+          "--hero-bg": `url(${heroBg})`,
+          backgroundImage: `radial-gradient(1200px 500px at 50% 20%, rgba(57,255,20,0.02), transparent 10%), url(${heroBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        } as React.CSSProperties & { "--hero-bg": string }
+      }
     >
       <div className="bg-overlay" aria-hidden />
 
@@ -928,6 +964,66 @@ export const Hero = () => {
           inset: 0;
           background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.6));
           z-index: 0;
+        }
+
+        /* Initial forming stage - very light darkening starts immediately */
+        .hero.bg-forming {
+          background-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.6) 100%), 
+                           radial-gradient(1200px 500px at 50% 20%, rgba(57,255,20,0.02), transparent 10%), 
+                           url(var(--hero-bg));
+          background-size: 100% 100%, cover, cover;
+          background-position: center, center, center;
+          transition: background-image 300ms cubic-bezier(.25,.1,.25,1), 
+                     background-size 300ms cubic-bezier(.25,.1,.25,1);
+        }
+
+        /* Gradual overlay darkening */
+        .hero.bg-forming .bg-overlay {
+          background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.7));
+          opacity: 0.9;
+          transition: background 300ms cubic-bezier(.25,.1,.25,1), 
+                     opacity 300ms cubic-bezier(.25,.1,.25,1);
+        }
+
+        /* Intermediate darkening stage - more pronounced */
+        .hero.bg-darkening {
+          background-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.65) 35%, rgba(0,0,0,0.8) 65%, rgba(0,0,0,0.95) 100%), 
+                           radial-gradient(1200px 500px at 50% 20%, rgba(57,255,20,0.01), transparent 10%), 
+                           url(var(--hero-bg));
+          background-size: 110% 110%, cover, cover;
+          background-position: center, center, center;
+        }
+
+        /* Enhanced darkening on overlay */
+        .hero.bg-darkening .bg-overlay {
+          background: linear-gradient(180deg, rgba(0,0,0,0.75), rgba(0,0,0,0.9));
+          opacity: 0.95;
+        }
+
+        /* Full black backdrop after particles have scattered */
+        .hero.bg-black {
+          background-image: none !important;
+          background-color: #000 !important;
+          transition: background-color 500ms cubic-bezier(.25,.1,.25,1), 
+                     background-image 500ms cubic-bezier(.25,.1,.25,1);
+        }
+
+        /* Completely hide overlay when fully black */
+        .hero.bg-black .bg-overlay {
+          opacity: 0;
+          transition: opacity 500ms cubic-bezier(.25,.1,.25,1);
+        }
+
+        /* Smooth restoration when particles gather back */
+        .hero.bg-revealed {
+          transition: background-color 1400ms cubic-bezier(.25,.46,.45,.94), 
+                     background-image 1400ms cubic-bezier(.25,.46,.45,.94);
+        }
+
+        /* Enhanced overlay restoration */
+        .hero.bg-revealed .bg-overlay {
+          transition: opacity 1400ms cubic-bezier(.25,.46,.45,.94), 
+                     background 1400ms cubic-bezier(.25,.46,.45,.94);
         }
 
         .inner {

@@ -155,14 +155,14 @@ export const Contact = () => {
             transition={{ type: "spring", stiffness: 50 }}
             className="space-y-8"
           >
-            <motion.div 
+            <motion.div
               className="glass p-6 rounded-lg interactive-card radial-shine glow-border"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               whileHover={{ y: -5 }}
             >
-              <Mail className="w-8 h-8 text-primary mb-3 animate-glow-pulse" />
+              <Mail className="w-8 h-8 text-primary mb-3 icon-hover-compatible" />
               <h3 className="text-xl font-bold mb-2 text-shimmer">Email</h3>
               <a
                 href="mailto:hello@inflectivex.com"
@@ -172,46 +172,48 @@ export const Contact = () => {
               </a>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="glass p-6 rounded-lg interactive-card multi-shine glow-border"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               whileHover={{ y: -5 }}
             >
-              <MapPin className="w-8 h-8 text-primary mb-3 animate-glow-pulse" />
+              <MapPin className="w-8 h-8 text-primary mb-3 icon-hover-compatible" />
               <h3 className="text-xl font-bold mb-2 text-shimmer">Location</h3>
               <p className="text-muted-foreground hover:text-foreground/90 transition-colors duration-300">
                 Colombo, Sri Lanka
               </p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               className="glass p-6 rounded-lg interactive-card flash-hover glow-border"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               whileHover={{ y: -5 }}
             >
-              <h3 className="text-xl font-bold mb-4 text-shimmer">Connect With Us</h3>
+              <h3 className="text-xl font-bold mb-4 text-shimmer">
+                Connect With Us
+              </h3>
               <div className="flex gap-4">
                 {[
                   { icon: Linkedin, label: "LinkedIn", href: "#" },
                   { icon: Github, label: "GitHub", href: "#" },
-                  { icon: Twitter, label: "Twitter", href: "#" }
+                  { icon: Twitter, label: "Twitter", href: "#" },
                 ].map((social, index) => (
-                  <motion.a 
+                  <motion.a
                     key={social.label}
                     href={social.href}
                     className="w-12 h-12 rounded-full border border-primary/30 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 hover:neon-glow btn-shine magnetic-hover pulse-hover"
                     aria-label={social.label}
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.4 + (index * 0.1) }}
-                    whileHover={{ 
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    whileHover={{
                       scale: 1.1,
                       rotate: 360,
-                      transition: { duration: 0.3 }
+                      transition: { duration: 0.3 },
                     }}
                     whileTap={{ scale: 0.95 }}
                   >

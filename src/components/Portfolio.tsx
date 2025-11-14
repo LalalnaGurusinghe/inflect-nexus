@@ -58,7 +58,7 @@ export const Portfolio = () => {
               }}
               className="glass p-8 rounded-lg interactive-card multi-shine glow-border group text-center cursor-pointer"
             >
-              <achievement.icon className="w-16 h-16 text-primary mx-auto mb-6 group-hover:animate-float group-hover:animate-glow-pulse transition-all duration-300" />
+              <achievement.icon className="w-16 h-16 text-primary mx-auto mb-6 group-hover:animate-float icon-hover-compatible transition-all duration-300" />
               <h3 className="text-2xl font-bold mb-3 group-hover:text-shimmer">
                 {achievement.title}
               </h3>

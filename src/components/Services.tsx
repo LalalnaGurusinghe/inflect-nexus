@@ -67,13 +67,13 @@ export const Services = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
-              whileHover={{ 
+              whileHover={{
                 y: -5,
-                transition: { duration: 0.3, ease: "easeOut" }
+                transition: { duration: 0.3, ease: "easeOut" },
               }}
               className="glass p-8 rounded-lg interactive-card flash-hover glow-border shine-sweep group cursor-pointer"
             >
-              <service.icon className="w-16 h-16 text-primary mb-6 group-hover:animate-float group-hover:animate-glow-pulse transition-all duration-300" />
+              <service.icon className="w-16 h-16 text-primary mb-6 group-hover:animate-float icon-hover-compatible transition-all duration-300" />
               <h3 className="text-2xl font-bold mb-4 group-hover:text-shimmer">
                 {service.title}
               </h3>
@@ -138,7 +138,7 @@ export const Services = () => {
               }}
               className="glass p-6 rounded-lg text-center interactive-card diagonal-shine glow-border cursor-pointer group"
             >
-              <cap.icon className="w-12 h-12 text-primary mx-auto mb-3 group-hover:animate-glow-pulse group-hover:animate-float transition-all duration-300" />
+              <cap.icon className="w-12 h-12 text-primary mx-auto mb-3 group-hover:animate-float icon-hover-compatible transition-all duration-300" />
               <p className="font-semibold group-hover:text-shimmer transition-all duration-300">
                 {cap.label}
               </p>
