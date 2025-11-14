@@ -5,6 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Linkedin, Github, Twitter } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  useScrollAnimation,
+  useStaggerAnimation,
+} from "@/hooks/useScrollAnimation";
 
 export const Contact = () => {
   const { toast } = useToast();
@@ -13,14 +17,28 @@ export const Contact = () => {
     email: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { ref: headerRef, isVisible: headerVisible } = useScrollAnimation({
+    threshold: 0.2,
+  });
+  const { ref: formRef, isVisible: formVisible } = useScrollAnimation({
+    threshold: 0.1,
+  });
+  const { ref: socialRef, isVisible: socialVisible } = useStaggerAnimation(100);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+
+    // Simulate form submission
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     toast({
       title: "Message Sent!",
       description: "We'll get back to you within 24 hours.",
     });
     setFormData({ name: "", email: "", message: "" });
+    setIsSubmitting(false);
   };
 
   const handleChange = (
@@ -36,11 +54,17 @@ export const Contact = () => {
     <section className="py-24 relative" id="contact">
       <div className="container mx-auto px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          ref={headerRef}
+          initial={{ opacity: 0, y: 50, scale: 0.9 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          transition={{
+            duration: 0.8,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
+          className={`text-center mb-16 ${
+            headerVisible ? "reveal-on-scroll animate" : "reveal-on-scroll"
+          }`}
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Let's Build the Future Together
@@ -55,24 +79,42 @@ export const Contact = () => {
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            ref={formRef}
+            initial={{ opacity: 0, x: -50, rotateY: -15 }}
+            whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
             viewport={{ once: true }}
-            transition={{ type: "spring", stiffness: 50 }}
-            className="glass p-8 rounded-lg interactive-card shine-sweep glow-border"
+            transition={{
+              duration: 0.8,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            whileHover={{
+              scale: 1.02,
+              transition: { duration: 0.3 },
+            }}
+            className={`glass p-8 rounded-lg interactive-card shine-sweep glow-border hover-lift ${
+              formVisible ? "slide-in-left animate" : "slide-in-left"
+            }`}
+            style={{ perspective: "1000px" }}
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  delay: 0.2,
+                  duration: 0.6,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                }}
+                whileHover={{ scale: 1.02 }}
               >
-                <label
+                <motion.label
                   htmlFor="name"
                   className="block text-sm font-semibold mb-2 text-shimmer"
+                  whileHover={{ x: 5, transition: { duration: 0.2 } }}
                 >
                   Name
-                </label>
+                </motion.label>
                 <Input
                   id="name"
                   name="name"
@@ -131,17 +173,37 @@ export const Contact = () => {
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  delay: 0.5,
+                  duration: 0.6,
+                  ease: [0.68, -0.55, 0.265, 1.55],
+                }}
+                whileHover={{
+                  scale: 1.05,
+                  y: -2,
+                  transition: { duration: 0.2 },
+                }}
+                whileTap={{ scale: 0.95 }}
               >
                 <Button
                   type="submit"
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 neon-glow py-6 text-lg font-bold transition-all duration-300 btn-shine pulse-hover magnetic-hover"
+                  disabled={isSubmitting}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 neon-glow py-6 text-lg font-bold transition-all duration-300 btn-shine pulse-hover magnetic-hover morph-button hover-elastic"
                 >
-                  Send Message
+                  <motion.span
+                    animate={isSubmitting ? { rotate: 360 } : { rotate: 0 }}
+                    transition={{
+                      duration: 1,
+                      repeat: isSubmitting ? Infinity : 0,
+                      ease: "linear",
+                    }}
+                  >
+                    {isSubmitting ? "Sending" : "Send Message"}
+                    {isSubmitting && <span className="loading-dots"></span>}
+                  </motion.span>
                 </Button>
               </motion.div>
             </form>
@@ -149,11 +211,15 @@ export const Contact = () => {
 
           {/* Contact Info */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: 50, rotateY: 15 }}
+            whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
             viewport={{ once: true }}
-            transition={{ type: "spring", stiffness: 50 }}
-            className="space-y-8"
+            transition={{
+              duration: 0.8,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            className="space-y-8 slide-in-right"
+            style={{ perspective: "1000px" }}
           >
             <motion.div
               className="glass p-6 rounded-lg interactive-card radial-shine glow-border"
